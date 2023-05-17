@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Memory Game</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Memory Game</h1>
+        <div class="game-board"></div>
+        <button onclick="startGame()">Start Game</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+.container {
+    text-align: center;
+}
+
+.game-board {
+    margin-top: 20px;
+}
+
+.card {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    margin: 5px;
+    cursor: pointer;
+    line-height: 100px;
+    font-size: 24px;
+}
+
+button {
+    margin-top: 20px;
+}
+const symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+let cards = [];
+
+function createCard(symbol) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = symbol;
+    card.addEventListener('click', flipCard);
+    return card;
+}
+
+function createCards() {
+    for (let symbol of symbols) {
+        const card1 = createCard(symbol);
+        const card2 = createCard(symbol);
+        cards.push(card1, card2);
+    }
+    shuffleCards();
+}
+
+function shuffleCards() {
+    cards.sort(() => Math.random() - 0.5);
+}
+
+let hasFlippedCard = false;
+let lockBoard = false;
+let firstCard, secondCard;
+
+function flipCard() {
+    if (lockBoard) return;
+    if (this === firstCard) return;
+
+    this.classList.add('flip');
+
+    if (!hasFlippedCard) {
+        hasFlippedCard = true;
+        firstCard = this;
+        return;
+    }
+
+    secondCard = this;
+    checkForMatch();
+}
+
+function checkForMatch() {
+    let isMatch = firstCard.innerHTML === secondCard.innerHTML;
+    isMatch ? disableCards() : unflipCards();
+}
+
+function disableCards() {
+    firstCard.removeEventListener('click', flipCard);
+    secondCard.removeEventListener('click', flipCard);
+    resetBoard();
+}
+
+function unflipCards() {
+    lockBoard = true;
+    setTimeout(() => {
+        firstCard.classList.remove('flip');
+        secondCard.classList.remove('flip');
+        resetBoard();
+    }, 1000);
+}
+
+function resetBoard() {
+    [hasFlippedCard, lockBoard] = [false, false];
+    [firstCard, secondCard] = [null, null];
+}
+
+function startGame() {
+    createCards();
+    const gameBoard = document.querySelector('.game-board');
+    for (let card of cards) {
+        gameBoard.appendChild(card);
+    }
+}
+npm install -g vercel
+vercel
